@@ -1,2 +1,3 @@
-# NIDAR-2025
-Codebase for our autonomous drone system for NIDAR 2025.
+# Drone-code
+Codebase for our autonomous drone system for the upcoming competition.
+
