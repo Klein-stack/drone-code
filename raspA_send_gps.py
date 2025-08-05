@@ -13,19 +13,36 @@ rasp_B_ip = "192.2.168.2"
 rasp_B_port = 9999
 
 #creating a flag for sending gps
-flag = "Green"
+flag = True
 
 #function to send gps
 def send_gps():
-	while flag == "Green":
+    global flag
+	while flag:
 		gps = vehicle.location.global_frame
-		if gps.lat != None or gps.lon != None:
+		if gps.lat != None and gps.lon != None:
 			data = f"{gps.lat},{gps.lon},{gps.alt}"
-			sock.send(data.encode(),(rasp_A_ip, rasp_B_port))
-			ask = input("do you want to continue? Y/N")
-			if ask == 'N':
-				break
+			sock.send(data.encode(),(rasp_B_ip, rasp_B_port))
+            
+            
+
 		sleep(0.5)
+        
+#threading
+t1 = threading.Thread(target = send_gps)
+t1.start()
+
+while True:
+    try:
+        ask = input("Stop sending gps? Y/N")
+        if ask == "Y":
+            t1.join()
+            flag = False
+            print("Stopped sending gps . . .")
+            break
+            
+
+           
 		
 	
 
