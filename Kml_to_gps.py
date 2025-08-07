@@ -17,12 +17,12 @@ def kml_file_processor(file_path):
     return coordinates
 
 # Example usage:
-file_path = r"C:\Users\Abhinav S D\OneDrive\Desktop\aerocet 2024-25 annual report\ground area1.kml"  # Replace with your KML file path
+file_path = r"Sargam_stage.kml"  # Replace with your KML file path
 coords = kml_file_processor(file_path)
 print(coords)
 
 # Store coordinates in a text file in the same directory as this script
-output_path = os.path.join(os.path.dirname(_file_), "coordinates.txt")
+output_path = os.path.join(os.path.dirname(__file__), "coordinates.txt")
 with open(output_path, "w") as f:
     for coord in coords:
         f.write(f"{coord}\n")
