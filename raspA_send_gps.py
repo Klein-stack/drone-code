@@ -3,52 +3,42 @@ from time import sleep
 import socket
 import threading
 
-#connecting to the vehicle
-connection_string = "dev/ttyACM0"
+# Connecting to the vehicle
+connection_string = "/dev/ttyACM0"  
 vehicle = connect(connection_string, wait_ready=True, baud=57600)
 
-#creating socket
+# Creating socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-rasp_B_ip = "192.2.168.2"
+rasp_B_ip = "192.168.2.2"  
 rasp_B_port = 9999
 
-#creating a flag for sending gps
+# Flag for sending GPS
 flag = True
 
-#function to send gps
+# Function to send GPS
 def send_gps():
     global flag
-	while flag:
-		gps = vehicle.location.global_frame
-		if gps.lat != None and gps.lon != None:
-			data = f"{gps.lat},{gps.lon},{gps.alt}"
-			sock.send(data.encode(),(rasp_B_ip, rasp_B_port))
-            
-            
+    while flag:
+        gps = vehicle.location.global_frame
+        if gps.lat is not None and gps.lon is not None:
+            data = f"{gps.lat},{gps.lon},{gps.alt}"
+            sock.sendto(data.encode(), (rasp_B_ip, rasp_B_port))
+        sleep(0.5)
 
-		sleep(0.5)
-        
-#threading
-t1 = threading.Thread(target = send_gps)
+t1 = threading.Thread(target=send_gps)
 t1.start()
 
+# Main loop to stop sending GPS
 while True:
     try:
-        ask = input("Stop sending gps? Y/N")
+        ask = input("Stop sending GPS? Y/N: ").strip().upper()
         if ask == "Y":
-            t1.join()
             flag = False
-            print("Stopped sending gps . . .")
+            t1.join()
+            print("Stopped sending GPS.")
             break
-            
-
-           
-		
-	
-
-			
-			
-		
-			
-			
-	
+    except KeyboardInterrupt:
+        flag = False
+        t1.join()
+        print("\nStopped sending GPS due to KeyboardInterrupt.")
+        break
